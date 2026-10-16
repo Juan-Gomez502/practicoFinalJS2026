@@ -1,6 +1,10 @@
 // Variables globales y configuración básica
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
+// Carga el sonido que se reproducirá cada 100 puntos
+const sonidoRecord = new Audio("aud/point.wav");
+const sonidoGameOver = new Audio("aud/die.wav");
+const sonidoSalto = new Audio("aud/jump.wav");
 
 let gameSpeed = 5;           // Velocidad constante (los cambios se harán en la modificación)
 let gravity = 0.5;           // Fuerza de gravedad
@@ -73,6 +77,7 @@ function update() {
     obstacle.x -= gameSpeed;
     if (score % 100 === 0 && score !== 0) {
         gameSpeed += 0.5; // Aumenta la velocidad del juego cada 100 puntos
+        sonidoRecord.play(); // Reproduce el sonido del record
     }
     if (gameOver) {
         gameSpeed = 0; // Detiene el movimiento del obstáculo si el juego termina
@@ -85,6 +90,7 @@ function update() {
     // Detección simple de colisiones (rectángulos)
     if (collision(dino, obstacle)) {
         gameOver = true;
+        sonidoGameOver.play(); // Reproduce el sonido de game over
         localStorage.setItem("dinoHighScore", highScore);
         document.getElementById("restartBtn").style.display = "block";
     }
@@ -135,6 +141,7 @@ document.addEventListener("keydown", function(e) {
         dino.vy = -10;  // Velocidad inicial de salto
         dino.image = dinoImages[dinoIndex];
         dinoIndex = (dinoIndex + 1) % dinoImages.length;
+        sonidoSalto.play(); // Reproduce el sonido del salto
         e.preventDefault();
     }
 });
