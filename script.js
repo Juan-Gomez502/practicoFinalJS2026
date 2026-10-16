@@ -135,7 +135,7 @@ function draw() {
 
 // Maneja el salto al presionar la barra espaciadora
 document.addEventListener("keydown", function(e) {
-    if (e.code === "Space" && !dino.isJumping && !gameOver) {
+    if (e.code === "Space" || e.code === "ArrowUp"  && !dino.isJumping && !gameOver) {
         dino.isJumping = true;
         dino.vy = -10;  // Velocidad inicial de salto
         dino.image = dinoImages[dinoIndex];
