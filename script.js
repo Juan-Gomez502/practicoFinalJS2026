@@ -38,10 +38,9 @@ dino_amarilloImg.src = "img/dino_amarillo.png";
 let dino_verdeImg = new Image();
 dino_verdeImg.src = "img/dino_verde.png";
 let dinoImg = new Image();
-dinoImg.src = "img/dino.png";      // Asegúrate de tener esta imagen en la ruta indicada
+dinoImg.src = "img/dino.png";     
 let cactusImg = new Image();
-cactusImg.src = "img/cactus.png";  // Asegúrate de tener esta imagen en la ruta indicada
-
+cactusImg.src = "img/cactus.png"; 
 // Lista de dinosaurios que se irán alternando
 const dinoImages = [dinoImg, dino_verdeImg, dino_amarilloImg];
 let dinoIndex = 0;
