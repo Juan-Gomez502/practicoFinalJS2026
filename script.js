@@ -24,12 +24,13 @@ let dino = {
     image: null
 };
 
-// Objeto obstáculo (cacto)
+// Obstáculo activo: puede ser un cacto o un pájaro
 let obstacle = {
     x: canvas.width,
-    y: canvas.height - 40,   // Altura del cacto: 40 px, alineado al suelo
+    y: canvas.height - 40,
     width: 25,
-    height: 40
+    height: 40,
+    type: "cactus"
 };
 
 // Carga de imágenes (ajusta las rutas según tu estructura)
@@ -41,6 +42,24 @@ let dinoImg = new Image();
 dinoImg.src = "img/dino.png";     
 let cactusImg = new Image();
 cactusImg.src = "img/cactus.png"; 
+let birdImg = new Image();
+birdImg.src = "img/pajarito.png";
+
+function randomizeObstacle() {
+    obstacle.type = Math.random() < 0.5 ? "cactus" : "bird";
+    if (obstacle.type === "bird") {
+        obstacle.y = canvas.height - 65;
+        obstacle.width = 38;
+        obstacle.height = 28;
+    } else {
+        obstacle.y = canvas.height - 40;
+        obstacle.width = 25;
+        obstacle.height = 40;
+    }
+}
+
+randomizeObstacle();
+
 // Lista de dinosaurios que se irán alternando
 const dinoImages = [dinoImg, dino_verdeImg, dino_amarilloImg];
 let dinoIndex = 0;
@@ -84,6 +103,7 @@ function update() {
     // Cuando el obstáculo sale por la izquierda, se reubica a la derecha con un espacio aleatorio
     if (obstacle.x + obstacle.width < 0) {
         obstacle.x = canvas.width + Math.random() * 200;
+        randomizeObstacle();
     }
     
     // Detección simple de colisiones (rectángulos)
@@ -124,18 +144,19 @@ function draw() {
         ctx.fillRect(dino.x, dino.y, dino.width, dino.height);
     }
     
-    // Dibuja el obstáculo (si la imagen está cargada, se usa; si no, se dibuja un rectángulo marrón)
-    if (cactusImg.complete) {
-        ctx.drawImage(cactusImg, obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+    // Dibuja el obstáculo activo, usando una forma simple mientras carga su imagen
+    const obstacleImg = obstacle.type === "bird" ? birdImg : cactusImg;
+    if (obstacleImg.complete && obstacleImg.naturalWidth > 0) {
+        ctx.drawImage(obstacleImg, obstacle.x, obstacle.y, obstacle.width, obstacle.height);
     } else {
-        ctx.fillStyle = "brown";
+        ctx.fillStyle = obstacle.type === "bird" ? "#333" : "brown";
         ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
     }
 }
 
 // Maneja el salto al presionar la barra espaciadora
 document.addEventListener("keydown", function(e) {
-    if (e.code === "Space" || e.code === "ArrowUp"  && !dino.isJumping && !gameOver) {
+    if ((e.code === "Space" || e.code === "ArrowUp") && !dino.isJumping && !gameOver) {
         dino.isJumping = true;
         dino.vy = -10;  // Velocidad inicial de salto
         dino.image = dinoImages[dinoIndex];
@@ -155,6 +176,7 @@ document.getElementById("restartBtn").addEventListener("click", function() {
     dinoIndex = 0;
     dino.image = dinoImages[dinoIndex];
     obstacle.x = canvas.width;
+    randomizeObstacle();
     this.style.display = "none";
     obstacle.x -= gameSpeed;
     gameLoop();
