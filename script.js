@@ -170,6 +170,7 @@ document.addEventListener("keydown", function(e) {
 document.getElementById("restartBtn").addEventListener("click", function() {
     gameOver = false;
     score = 0;
+    gameSpeed = 5;
     dino.y = canvas.height - dino.height;
     dino.isJumping = false;
     dino.vy = 0;
