@@ -13,14 +13,18 @@ let score = 0;
 const savedHighScore = Number(localStorage.getItem("dinoHighScore"));
 let highScore = Number.isFinite(savedHighScore) && savedHighScore > 0 ? savedHighScore : 0;
 
+const dinoStandingHeight = 47;
+const dinoCrouchingHeight = 24;
+
 // Objeto dinosaurio
 let dino = {
     x: 50,
-    y: canvas.height - 47,   // La altura del dino es de 47 px (se alinea al "suelo")
+    y: canvas.height - dinoStandingHeight,
     width: 44,
-    height: 47,
+    height: dinoStandingHeight,
     vy: 0,
     isJumping: false,
+    isCrouching: false,
     image: null
 };
 
@@ -40,6 +44,8 @@ let dino_verdeImg = new Image();
 dino_verdeImg.src = "img/dino_verde.png";
 let dinoImg = new Image();
 dinoImg.src = "img/dino.png";     
+let dinoAgachadoImg = new Image();
+dinoAgachadoImg.src = "img/dino_agachado.jpg";
 let cactusImg = new Image();
 cactusImg.src = "img/cactus.png"; 
 let birdImg = new Image();
@@ -156,7 +162,15 @@ function draw() {
 
 // Maneja el salto al presionar la barra espaciadora
 document.addEventListener("keydown", function(e) {
-    if ((e.code === "Space" || e.code === "ArrowUp") && !dino.isJumping && !gameOver) {
+    if (e.code === "ArrowDown" && !gameOver && !dino.isJumping) {
+        dino.isCrouching = true;
+        dino.height = dinoCrouchingHeight;
+        dino.y = canvas.height - dino.height;
+        dino.image = dinoAgachadoImg;
+        e.preventDefault();
+    }
+
+    if ((e.code === "Space" || e.code === "ArrowUp") && !dino.isJumping && !dino.isCrouching && !gameOver) {
         dino.isJumping = true;
         dino.vy = -10;  // Velocidad inicial de salto
         dino.image = dinoImages[dinoIndex];
@@ -166,13 +180,24 @@ document.addEventListener("keydown", function(e) {
     }
 });
 
+document.addEventListener("keyup", function(e) {
+    if (e.code === "ArrowDown" && dino.isCrouching) {
+        dino.isCrouching = false;
+        dino.height = dinoStandingHeight;
+        dino.y = canvas.height - dino.height;
+        dino.image = dinoImages[dinoIndex];
+    }
+});
+
 // Función para reiniciar el juego al hacer clic en el botón
 document.getElementById("restartBtn").addEventListener("click", function() {
     gameOver = false;
     score = 0;
     gameSpeed = 5;
+    dino.height = dinoStandingHeight;
     dino.y = canvas.height - dino.height;
     dino.isJumping = false;
+    dino.isCrouching = false;
     dino.vy = 0;
     dinoIndex = 0;
     dino.image = dinoImages[dinoIndex];
